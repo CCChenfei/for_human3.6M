@@ -2,19 +2,19 @@ clear;
 addpath('/home/chenf/Documents/pose_estimation/data/human3.6M_ori/');
 
 for k = 1:4
-    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6Mall/train/c',num2str(k),'/mix_train.txt'];
+    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6M/train/c',num2str(k),'/mix_train.txt'];
     fid = fopen(name,'at');
     count = 0;
     for j = 2:16
         for i = [1,5,6,7,8,9]
-            joints = load(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
+            joints = load(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
             joints = joints.gt_new;
             [m, n, p] = size(joints);
             order = randperm(p);
             for t = 1:p
-                I = imread(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(order(t)),'.jpg']);
+                I = imread(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(order(t)),'.jpg']);
                 count = count+1;
-                imwrite(I,['../Human3.6Mall/train/c',num2str(k),'/im',num2str(count),'.jpg']);
+                imwrite(I,['../Human3.6M/train/c',num2str(k),'/im',num2str(count),'.jpg']);
                 
                 fprintf(fid, '%s ', ['im',num2str(count),'.jpg']);
                 fprintf(fid,'%f,',joints(16,1,order(t)));fprintf(fid,'%f,',joints(16,2,order(t)));
@@ -39,18 +39,18 @@ for k = 1:4
 end
 
 for k = 1:4
-    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6Mall/test/c',num2str(k),'/mix_test.txt'];
+    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6M/test/c',num2str(k),'/mix_test.txt'];
     fid = fopen(name,'at');
     count = 0;
     for i = 11
         for j = 2:16
-            joints = load(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
+            joints = load(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
             joints = joints.gt_new;
             [m, n, p] = size(joints);
             for t = 1:p
-                I = imread(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(t),'.jpg']);
+                I = imread(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(t),'.jpg']);
                 count = count+1;
-                imwrite(I,['../Human3.6Mall/test/c',num2str(k),'/im',num2str(count),'.jpg']);
+                imwrite(I,['../Human3.6M/test/c',num2str(k),'/im',num2str(count),'.jpg']);
                 
                 fprintf(fid, '%s ', ['im',num2str(count),'.jpg']);
                 fprintf(fid,'%f,',joints(16,1,t));fprintf(fid,'%f,',joints(16,2,t));

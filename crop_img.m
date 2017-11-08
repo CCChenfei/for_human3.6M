@@ -34,13 +34,15 @@ for i = [1,5,6,7,8,9,11]
 %                 I(:,:,all(I==0,1))=[];
                 pad_x = bottom_loc(1)-top_loc(1);
                 pad_y = bottom_loc(2)-top_loc(2);
-                I = imcrop(I,[top_loc(1) top_loc(2) pad_x pad_y]);
+               % I = imcrop(I,[top_loc(1) top_loc(2) pad_x pad_y]);
                 if pad_x>pad_y
                     if rem(pad_x-pad_y,2)==0
-                        I = padarray(I,[(pad_x-pad_y)/2 0]);
+                        %I = padarray(I,[(pad_x-pad_y)/2 0]);
+                        I = imcrop(I,[top_loc(1) top_loc(2)-(pad_x-pad_y)/2 pad_x pad_x]);
                     else
-                        I = padarray(I,[fix((pad_x-pad_y)/2) 0],'pre');
-                        I = padarray(I,[fix((pad_x-pad_y)/2)+1 0],'post');
+                        I = imcrop(I,[top_loc(1) top_loc(2)-fix((pad_x-pad_y)/2) pad_x pad_x]);
+%                         I = padarray(I,[fix((pad_x-pad_y)/2) 0],'pre');
+%                         I = padarray(I,[fix((pad_x-pad_y)/2)+1 0],'post');
                     end
                     [row,col,dim] = size(I);
                     for t = 1:t1
@@ -49,10 +51,12 @@ for i = [1,5,6,7,8,9,11]
                     end
                 else
                     if rem(pad_y-pad_x,2)==0
-                        I = padarray(I,[0 (pad_y-pad_x)/2]);
+                        I = imcrop(I,[top_loc(1)-(pad_y-pad_x)/2 top_loc(2) pad_y pad_y]);
+%                         I = padarray(I,[0 (pad_y-pad_x)/2]);
                     else
-                        I = padarray(I,[0 fix((pad_y-pad_x)/2)],'pre');
-                        I = padarray(I,[0 fix((pad_y-pad_x)/2)+1],'post');
+                        I = imcrop(I,[top_loc(1)-fix((pad_y-pad_x)/2) top_loc(2) pad_y pad_y]);
+%                         I = padarray(I,[0 fix((pad_y-pad_x)/2)],'pre');
+%                         I = padarray(I,[0 fix((pad_y-pad_x)/2)+1],'post');
                     end
                     [row,col,dim] = size(I);
                     for t = 1:t1
@@ -63,11 +67,11 @@ for i = [1,5,6,7,8,9,11]
  
                 I = imresize(I,[256 256]);
 %                 figure;imshow(I);
-                mkdir(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j)])
-                imwrite(I,['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(m),'.jpg']);
+                mkdir(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j)])
+                imwrite(I,['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(m),'.jpg']);
                 
             end
-            save(['../Human3.6Mall/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
+            save(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
         end
     end
 end
