@@ -1,21 +1,48 @@
 clear;
-addpath('/home/chenf/Documents/pose_estimation/data/human3.6M_ori/');
+addpath('/home/chenf/Documents/pose_estimation/data/multiviewH36m/');
 
+train_3D = '/home/chenf/Documents/pose_estimation/data/multiviewH36m/train/train_3D.txt';
 for k = 1:4
-    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6M/train/c',num2str(k),'/mix_train.txt'];
+    name = ['/home/chenf/Documents/pose_estimation/data/multiviewH36m/train/c',num2str(k),'/mix_train.txt'];
     fid = fopen(name,'at');
+    if k==1
+        fid3D = fopen(train_3D,'at');       
+    end
+    
     count = 0;
     for j = 2:16
         for i = [1,5,6,7,8,9]
-            joints = load(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
+            joints = load(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
             joints = joints.gt_new;
             [m, n, p] = size(joints);
+            if k==1
+                joints_3D = load(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joint_3D.mat'],'joint_3D');
+                joints_3D = joints_3D.joint_3D;
+            end
             order = randperm(p);
             for t = 1:p
-                I = imread(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(order(t)),'.jpg']);
+                I = imread(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(order(t)),'.jpg']);
                 count = count+1;
-                imwrite(I,['../Human3.6M/train/c',num2str(k),'/im',num2str(count),'.jpg']);
+                imwrite(I,['../multiviewH36m/train/c',num2str(k),'/im',num2str(count),'.jpg']);
                 
+                if k == 1
+                    fprintf(fid3D, '%s ', ['im',num2str(count),'.jpg']);
+                    fprintf(fid3D,'%f,',joints_3D(16,1,order(t)));fprintf(fid3D,'%f,',joints_3D(16,2,order(t)));fprintf(fid3D,'%f,',joints_3D(16,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(14,1,order(t)));fprintf(fid3D,'%f,',joints_3D(14,2,order(t)));fprintf(fid3D,'%f,',joints_3D(14,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(26,1,order(t)));fprintf(fid3D,'%f,',joints_3D(26,2,order(t)));fprintf(fid3D,'%f,',joints_3D(26,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(18,1,order(t)));fprintf(fid3D,'%f,',joints_3D(18,2,order(t)));fprintf(fid3D,'%f,',joints_3D(18,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(27,1,order(t)));fprintf(fid3D,'%f,',joints_3D(27,2,order(t)));fprintf(fid3D,'%f,',joints_3D(27,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(19,1,order(t)));fprintf(fid3D,'%f,',joints_3D(19,2,order(t)));fprintf(fid3D,'%f,',joints_3D(19,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(28,1,order(t)));fprintf(fid3D,'%f,',joints_3D(28,2,order(t)));fprintf(fid3D,'%f,',joints_3D(28,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(20,1,order(t)));fprintf(fid3D,'%f,',joints_3D(20,2,order(t)));fprintf(fid3D,'%f,',joints_3D(20,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(2,1,order(t)));fprintf(fid3D,'%f,',joints_3D(2,2,order(t)));fprintf(fid3D,'%f,',joints_3D(2,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(7,1,order(t)));fprintf(fid3D,'%f,',joints_3D(7,2,order(t)));fprintf(fid3D,'%f,',joints_3D(7,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(3,1,order(t)));fprintf(fid3D,'%f,',joints_3D(3,2,order(t)));fprintf(fid3D,'%f,',joints_3D(3,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(8,1,order(t)));fprintf(fid3D,'%f,',joints_3D(8,2,order(t)));fprintf(fid3D,'%f,',joints_3D(8,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(4,1,order(t)));fprintf(fid3D,'%f,',joints_3D(4,2,order(t)));fprintf(fid3D,'%f,',joints_3D(4,3,order(t)));
+                    fprintf(fid3D,'%f,',joints_3D(9,1,order(t)));fprintf(fid3D,'%f ',joints_3D(9,2,order(t)));fprintf(fid3D,'%f ',joints_3D(9,3,order(t)));
+                    fprintf(fid3D,'%d,%d,%d,%d,%d %d\n', 0,0,0,0,0,0);
+                end
                 fprintf(fid, '%s ', ['im',num2str(count),'.jpg']);
                 fprintf(fid,'%f,',joints(16,1,order(t)));fprintf(fid,'%f,',joints(16,2,order(t)));
                 fprintf(fid,'%f,',joints(14,1,order(t)));fprintf(fid,'%f,',joints(14,2,order(t)));
@@ -36,21 +63,52 @@ for k = 1:4
         end
     end
     fclose(fid);
+    if k==1
+        fclose(fid3D);
+    end
 end
 
+test_3D = '/home/chenf/Documents/pose_estimation/data/multiviewH36m/test/test_3D.txt';
 for k = 1:4
-    name = ['/home/chenf/Documents/pose_estimation/data/Human3.6M/test/c',num2str(k),'/mix_test.txt'];
+    name = ['/home/chenf/Documents/pose_estimation/data/multiviewH36m/test/c',num2str(k),'/mix_test.txt'];
     fid = fopen(name,'at');
     count = 0;
+    if k==1
+        fid3D = fopen(test_3D,'at');       
+    end
     for i = 11
         for j = 2:16
-            joints = load(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
+            joints = load(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joints.mat'],'gt_new');
             joints = joints.gt_new;
             [m, n, p] = size(joints);
+            if k==1
+                joints_3D = load(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/joint_3D.mat'],'joint_3D');
+                joints_3D = joints_3D.joint_3D;
+            end
             for t = 1:p
-                I = imread(['../Human3.6M/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(t),'.jpg']);
+                I = imread(['../multiviewH36m/s',num2str(i),'/c',num2str(k),'_',num2str(j),'/im',num2str(t),'.jpg']);
                 count = count+1;
-                imwrite(I,['../Human3.6M/test/c',num2str(k),'/im',num2str(count),'.jpg']);
+                imwrite(I,['../multiviewH36m/test/c',num2str(k),'/im',num2str(count),'.jpg']);
+                
+                
+                if k == 1
+                    fprintf(fid3D, '%s ', ['im',num2str(count),'.jpg']);
+                    fprintf(fid3D,'%f,',joints_3D(16,1,t));fprintf(fid3D,'%f,',joints_3D(16,2,t));fprintf(fid3D,'%f,',joints_3D(16,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(14,1,t));fprintf(fid3D,'%f,',joints_3D(14,2,t));fprintf(fid3D,'%f,',joints_3D(14,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(26,1,t));fprintf(fid3D,'%f,',joints_3D(26,2,t));fprintf(fid3D,'%f,',joints_3D(26,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(18,1,t));fprintf(fid3D,'%f,',joints_3D(18,2,t));fprintf(fid3D,'%f,',joints_3D(18,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(27,1,t));fprintf(fid3D,'%f,',joints_3D(27,2,t));fprintf(fid3D,'%f,',joints_3D(27,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(19,1,t));fprintf(fid3D,'%f,',joints_3D(19,2,t));fprintf(fid3D,'%f,',joints_3D(19,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(28,1,t));fprintf(fid3D,'%f,',joints_3D(28,2,t));fprintf(fid3D,'%f,',joints_3D(28,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(20,1,t));fprintf(fid3D,'%f,',joints_3D(20,2,t));fprintf(fid3D,'%f,',joints_3D(20,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(2,1,t));fprintf(fid3D,'%f,',joints_3D(2,2,t));fprintf(fid3D,'%f,',joints_3D(2,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(7,1,t));fprintf(fid3D,'%f,',joints_3D(7,2,t));fprintf(fid3D,'%f,',joints_3D(7,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(3,1,t));fprintf(fid3D,'%f,',joints_3D(3,2,t));fprintf(fid3D,'%f,',joints_3D(3,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(8,1,t));fprintf(fid3D,'%f,',joints_3D(8,2,t));fprintf(fid3D,'%f,',joints_3D(8,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(4,1,t));fprintf(fid3D,'%f,',joints_3D(4,2,t));fprintf(fid3D,'%f,',joints_3D(4,3,t));
+                    fprintf(fid3D,'%f,',joints_3D(9,1,t));fprintf(fid3D,'%f ',joints_3D(9,2,t));fprintf(fid3D,'%f ',joints_3D(9,3,t));
+                    fprintf(fid3D,'%d,%d,%d,%d,%d %d\n', 0,0,0,0,0,0);
+                end
                 
                 fprintf(fid, '%s ', ['im',num2str(count),'.jpg']);
                 fprintf(fid,'%f,',joints(16,1,t));fprintf(fid,'%f,',joints(16,2,t));
@@ -72,4 +130,7 @@ for k = 1:4
         end
     end
     fclose(fid);
+    if k==1
+        fclose(fid3D);
+    end
 end
